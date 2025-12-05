@@ -130,6 +130,7 @@
             this.Btn_GenerarCodigo.TabIndex = 10;
             this.Btn_GenerarCodigo.Text = "🎲 Generar código";
             this.Btn_GenerarCodigo.UseVisualStyleBackColor = true;
+            this.Btn_GenerarCodigo.Click += new System.EventHandler(this.Btn_GenerarCodigo_Click);
             // 
             // label4
             // 

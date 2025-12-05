@@ -101,13 +101,13 @@ namespace CreatingQR
             SizeF measured = SizeF.Empty;
             if (!string.IsNullOrWhiteSpace(subtitle))
             {
-                subtitleFont = new Font("Calibri", 44F, FontStyle.Bold);
+                subtitleFont = new Font("Calibri", 72F, FontStyle.Bold);
                 using (var g = Graphics.FromImage(qrBmp))
                 {
                     g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
                     measured = g.MeasureString(subtitle, subtitleFont);
                 }
-                subtitleHeight = (int)Math.Ceiling(measured.Height) + 10; // padding
+                subtitleHeight = (int)Math.Ceiling(measured.Height) + 5; // padding
             }
 
             int finalWidth = qrBmp.Width;
@@ -155,7 +155,7 @@ namespace CreatingQR
                     {
                         int padding = 6;
                         var rect = new Rectangle(logoX - padding, logoY - padding, drawW + padding * 2, drawH + padding * 2);
-                        int radius = Math.Min(rect.Width, rect.Height) / 16;
+                        int radius = Math.Min(rect.Width, rect.Height) / 2;
                         // Rounded rectangle
                         path.AddArc(rect.X, rect.Y, radius, radius, 180, 90);
                         path.AddArc(rect.Right - radius, rect.Y, radius, radius, 270, 90);
@@ -176,11 +176,17 @@ namespace CreatingQR
                 // Draw subtitle if provided
                 if (!string.IsNullOrWhiteSpace(subtitle) && subtitleFont != null)
                 {
-                    using (var brush = new SolidBrush(Color.Black))
+                    var bgRect = new Rectangle(0, qrBmp.Height, finalWidth, subtitleHeight);
+                    using (var bgBrush = new SolidBrush(Color.Black))
+                    {
+                        g.FillRectangle(bgBrush, bgRect);
+                    }
+
+                    using (var textBrush = new SolidBrush(Color.White))
                     using (var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
                     {
-                        var textRect = new RectangleF(0, qrBmp.Height + 5, finalWidth, subtitleHeight);
-                        g.DrawString(subtitle, subtitleFont, brush, textRect, sf);
+                        var textRect = new RectangleF(0, qrBmp.Height + 5, finalWidth, subtitleHeight); // 5px de margen superior
+                        g.DrawString(subtitle, subtitleFont, textBrush, textRect, sf);
                     }
                 }
             }
@@ -221,11 +227,9 @@ namespace CreatingQR
             }
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
+        private void Btn_GenerarCodigo_Click(object sender, EventArgs e)
         {
-            currentQr?.Dispose();
-            logoBitmap?.Dispose();
-            base.OnFormClosing(e);
+            Txt_Codigo.Text = Guid.NewGuid().ToString().Replace("-", "");
         }
     }
 }
